@@ -39,7 +39,7 @@ public class BallBehaviour : MonoBehaviour
         {
             ball.useGravity = true;
             float angle = 45.0f;
-            Vector3 dir = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0.0f);
+            Vector3 dir = new Vector3(0.0f, Mathf.Sin(angle), Mathf.Cos(angle));
             ball.AddForce(dir * cannonForce);
             fired = true;
         }
