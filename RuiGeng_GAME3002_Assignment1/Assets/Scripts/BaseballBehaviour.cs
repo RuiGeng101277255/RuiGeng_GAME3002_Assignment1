@@ -21,6 +21,7 @@ public class BaseballBehaviour : MonoBehaviour
 
     private MeshFilter m_meshFilter;
 
+    private AudioSource m_swingingsfx;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +34,8 @@ public class BaseballBehaviour : MonoBehaviour
         m_bounds = m_meshFilter.mesh.bounds;
         m_collided = false;
         m_player = FindObjectOfType<PlayerBehaviour>();
+        m_swingingsfx = GetComponent<AudioSource>();
+        m_swingingsfx.Play();
         CreateArrow();
     }
 
@@ -64,6 +67,7 @@ public class BaseballBehaviour : MonoBehaviour
         m_tempTarget = tar;
         Vector3 posDiff = m_tempTarget - transform.position;
         m_ArrowVelDir = posDiff.normalized * m_ArrowSpeed;
+        //m_swingingsfx.Play();
     }
 
     private void CreateArrow()

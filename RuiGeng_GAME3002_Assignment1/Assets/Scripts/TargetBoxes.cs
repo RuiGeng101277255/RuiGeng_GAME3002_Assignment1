@@ -12,6 +12,7 @@ public class TargetBoxes : MonoBehaviour
     private float m_remainTimer = 0.0f;
 
     private ParticleSystem m_particles;
+    private AudioSource m_explosionsfx;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,8 @@ public class TargetBoxes : MonoBehaviour
         m_BoxRenderer = GetComponent<Renderer>();
         m_BoxRenderer.material.color = Color.red;
         m_particles = GetComponent<ParticleSystem>();
+        m_explosionsfx = GetComponent<AudioSource>();
+        m_explosionsfx.Pause();
         m_particles.Pause();
     }
 
@@ -46,6 +49,7 @@ public class TargetBoxes : MonoBehaviour
             m_targetHit = true;
             m_BoxRenderer.material.color = Color.green;
             m_particles.Play();
+            m_explosionsfx.Play();
         }
     }
 

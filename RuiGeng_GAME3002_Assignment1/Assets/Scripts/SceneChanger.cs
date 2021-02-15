@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneChanger : MonoBehaviour
 {
     private bool isPause = false;
+    private AudioSource m_buttonSFX;
     public void openScene(string s)
     {
         if (s == "QUIT")
@@ -34,11 +35,18 @@ public class SceneChanger : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        m_buttonSFX = GetComponent<AudioSource>();
+        m_buttonSFX.Pause();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void playSound()
+    {
+        m_buttonSFX.Play();
     }
 }
