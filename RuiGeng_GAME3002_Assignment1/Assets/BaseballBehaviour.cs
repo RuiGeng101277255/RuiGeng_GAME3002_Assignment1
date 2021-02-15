@@ -9,6 +9,7 @@ public class BaseballBehaviour : MonoBehaviour
     public float m_BaseBallGravity;
     private Vector3 m_ArrowVelDir = Vector3.forward;
     private Rigidbody m_BaseballRB = null;
+    private SphereCollider m_BaseBallCol = null;
 
     private Vector3 m_tempTarget = Vector3.zero;
 
@@ -26,7 +27,9 @@ public class BaseballBehaviour : MonoBehaviour
     {
         m_meshFilter = GetComponent<MeshFilter>();
         m_BaseballRB = GetComponent<Rigidbody>();
+        m_BaseBallCol = GetComponent<SphereCollider>();
         m_BaseballRB.transform.SetParent(transform);
+        m_BaseBallCol.transform.SetParent(transform);
         m_bounds = m_meshFilter.mesh.bounds;
         m_collided = false;
         m_player = FindObjectOfType<PlayerBehaviour>();

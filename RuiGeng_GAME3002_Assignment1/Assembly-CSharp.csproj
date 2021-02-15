@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Assets\BaseballBehaviour.cs" />
     <Compile Include="Assets\PlayerBehaviour.cs" />
+    <Compile Include="Assets\TargetBoxes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
