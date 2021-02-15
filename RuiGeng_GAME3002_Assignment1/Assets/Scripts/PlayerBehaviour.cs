@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerBehaviour : MonoBehaviour
 {
     public int ArrowNumber;
+    private int m_BaseballLeft;
 
     private Vector3 m_PlayerVComp = Vector3.zero;
     private Vector3 m_AimVComp = Vector3.zero;
@@ -15,8 +16,10 @@ public class PlayerBehaviour : MonoBehaviour
     private Queue<GameObject> m_ArrowPool;
     public GameObject m_Arrow;
     public int ArrowFireRate;
+    private float m_delFire;
 
-    private float deltaSpeed1D = 0.01f;
+    private float deltaSpeed1D = 0.05f;
+    public bool m_LevelCompleted = false;
 
     public SceneChanger m_sceneChanger;
     public bool m_scenePaused = false;
@@ -24,10 +27,11 @@ public class PlayerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ArrowFireRate = 50; //For now
+        //ArrowFireRate = GetComponent<int>(); //For now
+        m_BaseballLeft = ArrowNumber;
         m_PlayerRB = GetComponent<Rigidbody>();
         m_PlayerCam = GetComponentInChildren<Camera>();
-        
+        m_delFire = 0.0f;
         createAimObject();
         buildArrowPool();
     }
@@ -35,18 +39,26 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (!m_LevelCompleted)
         {
-            if (m_scenePaused)
+            if (Input.GetKeyDown(KeyCode.P))
             {
-                m_sceneChanger.openScene("Unpause");
-                m_scenePaused = false;
+                if (m_scenePaused)
+                {
+                    m_sceneChanger.openScene("Unpause");
+                    m_scenePaused = false;
+                }
+                else
+                {
+                    m_sceneChanger.openScene("PauseScene");
+                    m_scenePaused = true;
+                }
             }
-            else
-            {
-                m_sceneChanger.openScene("PauseScene");
-                m_scenePaused = true;
-            }
+        }
+        else
+        {
+            m_sceneChanger.openScene("WinScene");
+            m_scenePaused = true;
         }
 
         if (m_scenePaused)
@@ -58,6 +70,10 @@ public class PlayerBehaviour : MonoBehaviour
             updatePlayerInput();
             updateAimObject();
             Time.timeScale = 1.0f;
+            if (m_delFire > 0)
+            {
+                m_delFire -= Time.deltaTime;
+            }
         }
     }
 
@@ -94,13 +110,35 @@ public class PlayerBehaviour : MonoBehaviour
             m_PlayerVComp.x = deltaSpeed1D;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0))
         {
-            //Firing arrow
-            launchArrow();
+            //Firing arrow if delta fire rate to frame is not 0, prevents from spamming
+            if (m_delFire <= 0)
+            {
+                if (m_BaseballLeft > 0)
+                {
+                    launchArrow();
+                    m_BaseballLeft -= 1;
+                    m_delFire = ArrowFireRate * Time.deltaTime;
+                }
+            }
         }
 
-        if (Input.GetKeyUp(KeyCode.W)|| Input.GetKeyUp(KeyCode.S))
+        //if (Input.GetKeyUp(KeyCode.Space))
+        //{
+        //    //Firing arrow if delta fire rate to frame is not 0, prevents from spamming
+        //    if (m_delFire <= 0)
+        //    {
+        //        if (m_BaseballLeft > 0)
+        //        {
+        //            launchArrow();
+        //            m_BaseballLeft -= 1;
+        //            m_delFire = ArrowFireRate * Time.deltaTime;
+        //        }
+        //    }
+        //}
+
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
             m_PlayerVComp.z = 0.0f;
         }
@@ -110,8 +148,8 @@ public class PlayerBehaviour : MonoBehaviour
             m_PlayerVComp.x = 0.0f;
         }
 
-        transform.position += m_PlayerVComp;
-        m_AimObject.transform.position += m_PlayerVComp;
+        transform.position += m_PlayerVComp * 0.4f;
+        m_AimObject.transform.position += m_PlayerVComp * 0.4f;
     }
 
     private void updateAimObject()
@@ -146,24 +184,24 @@ public class PlayerBehaviour : MonoBehaviour
             m_AimVComp.x = 0.0f;
         }
 
-        //if(Input.GetMouseButtonDown(0))
-        //{
-        //    Vector3 mousePos = Input.mousePosition;
-        //    Vector3 ScreenPos = m_PlayerCam.ScreenToWorldPoint(mousePos);
-        //    //Vector3 ScreenPos = m_PlayerCam.ScreenToViewportPoint(mousePos);
+        if(Input.GetMouseButtonDown(1))
+        {
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 ScreenPos = m_PlayerCam.ScreenToWorldPoint(mousePos);
+            //Vector3 ScreenPos = m_PlayerCam.ScreenToViewportPoint(mousePos);
 
-        //    ScreenPos.z = transform.position.z + 2.0f;
+            ScreenPos.z = transform.position.z + 2.0f;
 
-        //    m_AimObject.transform.position = ScreenPos;
+            m_AimObject.transform.position = ScreenPos;
 
-        //    Debug.Log("MousePos" + mousePos);
-        //    Debug.Log("ScreenPos" + ScreenPos);
-        //}
+            Debug.Log("MousePos" + mousePos);
+            Debug.Log("ScreenPos" + ScreenPos);
+        }
 
-        //float xDir = Input.GetAxis("Mouse X");
-        //float yDir = Input.GetAxis("Mouse Y");
+        float xDir = Input.GetAxis("Mouse X");
+        float yDir = Input.GetAxis("Mouse Y");
 
-        //m_AimVComp = new Vector3(xDir, yDir, 0.0f) * 2.0f * deltaSpeed1D;
+        m_AimVComp = new Vector3(xDir, yDir, 0.0f) * 2.0f * deltaSpeed1D;
 
         m_AimObject.transform.position += m_AimVComp;
     }
@@ -212,5 +250,16 @@ public class PlayerBehaviour : MonoBehaviour
     {
         returnedArrow.SetActive(false);
         m_ArrowPool.Enqueue(returnedArrow);
+
+        if  (m_BaseballLeft < ArrowNumber)
+        {
+            m_BaseballLeft += 1;
+        }
     }
+
+    public int getBaseballLeft()
+    {
+        return m_BaseballLeft;
+    }
+
 }

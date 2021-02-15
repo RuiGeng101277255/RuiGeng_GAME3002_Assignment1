@@ -357,24 +357,25 @@ MonoBehaviour:
 
     W, A, S, D - Player Movement
 
-    Arrow Keys - Target
-    Movement
+    Left Mouse click
+    - Shoot Baseball
 
-    SpaceBar - Shoot Baseball
+    Right Mouse click - Reset Target Position
 
-    P - Pause Menu
-
-
-    You are in
-    an amusement park, in front of you is a stand that you can throw baseball at.
-
-    The
-    baseball will initially move to the aim target (red dot) without gravity''s presence,
-    then after passing such point, the baseball would be in projectile motion.
+    P - Pause
+    Menu
 
 
-    When
-    boxes are hit, they turn green and dissapear after 2 seconds.'
+    You are in an amusement park, in front of you is a stand that you
+    can throw baseball at.
+
+    The baseball will initially move to the aim target
+    (red dot) without gravity''s presence, then after passing such point, the baseball
+    would be in projectile motion.
+
+
+    When boxes are hit, they turn green and
+    dissapear after 2 seconds.'
 --- !u!222 &824264431
 CanvasRenderer:
   m_ObjectHideFlags: 0

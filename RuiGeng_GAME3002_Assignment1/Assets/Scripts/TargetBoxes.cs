@@ -8,13 +8,18 @@ public class TargetBoxes : MonoBehaviour
     private Renderer m_BoxRenderer;
 
     private bool m_targetHit = false;
+    public bool m_hitCounted = false;
     private float m_remainTimer = 0.0f;
+
+    private ParticleSystem m_particles;
 
     // Start is called before the first frame update
     void Start()
     {
         m_BoxRenderer = GetComponent<Renderer>();
         m_BoxRenderer.material.color = Color.red;
+        m_particles = GetComponent<ParticleSystem>();
+        m_particles.Pause();
     }
 
     // Update is called once per frame
@@ -40,6 +45,12 @@ public class TargetBoxes : MonoBehaviour
         {
             m_targetHit = true;
             m_BoxRenderer.material.color = Color.green;
+            m_particles.Play();
         }
+    }
+
+    public bool getBoxHit()
+    {
+        return m_targetHit;
     }
 }
