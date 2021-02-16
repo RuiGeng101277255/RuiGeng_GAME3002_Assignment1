@@ -14,11 +14,14 @@ public class TargetBoxes : MonoBehaviour
     private ParticleSystem m_particles;
     private AudioSource m_explosionsfx;
 
+    public bool m_IsDetection; // To check for stepping platform
+    public PlayerBehaviour m_Player;
+
     // Start is called before the first frame update
     void Start()
     {
         m_BoxRenderer = GetComponent<Renderer>();
-        m_BoxRenderer.material.color = Color.red;
+        m_BoxRenderer.material.color = Color.white;
         m_particles = GetComponent<ParticleSystem>();
         m_explosionsfx = GetComponent<AudioSource>();
         m_explosionsfx.Pause();
@@ -28,6 +31,11 @@ public class TargetBoxes : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if ((m_Player.m_PlayerSteppedOnStrigger)&& !m_IsDetection && !m_targetHit)
+        {
+            m_BoxRenderer.material.color = Color.red;
+        }
+
         if (m_targetHit)
         {
             if (m_remainTimer < HitTimer)
@@ -44,12 +52,24 @@ public class TargetBoxes : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         var ColMesh = collision.gameObject.GetComponent<MeshFilter>();
+        
         if (collision.gameObject.name == "Baseball(Clone)")
         {
-            m_targetHit = true;
-            m_BoxRenderer.material.color = Color.green;
-            m_particles.Play();
-            m_explosionsfx.Play();
+            if ((!m_IsDetection) && m_Player.m_PlayerSteppedOnStrigger)
+            {
+                m_targetHit = true;
+                m_BoxRenderer.material.color = Color.green;
+                m_particles.Play();
+                m_explosionsfx.Play();
+            }
+        }
+        else if (collision.gameObject.name == "Player")
+        {
+            if (m_IsDetection)
+            {
+                m_BoxRenderer.material.color = Color.cyan;
+                m_Player.m_PlayerSteppedOnStrigger = true;
+            }
         }
     }
 

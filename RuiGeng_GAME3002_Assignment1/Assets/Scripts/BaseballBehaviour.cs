@@ -36,7 +36,6 @@ public class BaseballBehaviour : MonoBehaviour
         m_player = FindObjectOfType<PlayerBehaviour>();
         m_swingingsfx = GetComponent<AudioSource>();
         m_swingingsfx.Play();
-        CreateArrow();
     }
 
     // Update is called once per frame
@@ -45,11 +44,6 @@ public class BaseballBehaviour : MonoBehaviour
         m_move();
         m_rotate();
         m_checkLimit();
-        //if (m_inUse)
-        //{
-        //    transform.position += Vector3.forward * m_ArrowSpeed;
-        //    Debug.Log(transform.position);
-        //}
     }
 
     public void SetUse(bool use)
@@ -67,53 +61,19 @@ public class BaseballBehaviour : MonoBehaviour
         m_tempTarget = tar;
         Vector3 posDiff = m_tempTarget - transform.position;
         m_ArrowVelDir = posDiff.normalized * m_ArrowSpeed;
-        //m_swingingsfx.Play();
-    }
-
-    private void CreateArrow()
-    {
-        //m_ArrowObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        //m_ArrowObj.transform.position = Vector3.zero;
-        //m_ArrowObj.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-        //m_ArrowObj.GetComponent<Renderer>().material.color = Color.green;
-        //m_ArrowObj.GetComponent<Collider>().enabled = true;
     }
 
     private void m_move()
     {
-        //m_BaseballRB.isKinematic = true;
-        //m_BaseballRB.velocity += m_ArrowVelDir;
-        //m_BaseballRB.AddForce(new Vector3(0.0f, -0.0098f, 0.0f));
-
-
+        //Applying change in position as velocity by change in time
         transform.position += m_ArrowVelDir * Time.deltaTime; //dx = vdt
-        //Gravity
-
-
-        //m_BaseballRB.position += m_BaseballRB.velocity * 0.01f;
-        //m_ArrowVelDir = Vector3.zero;
-        //m_BaseballRB.AddForce(m_ArrowVelDir * 500);
-        //m_ArrowVelDir = Vector3.zero;
-
-        //transform.position += m_ArrowVelDir * Time.deltaTime;
-        //transform.position += new Vector3(0.0f, 0.0001f, 0.0f) * Physics.gravity.y;
     }
 
     private void m_rotate()
     {
-        if (transform.position.z < m_tempTarget.z)
-        {
-
-            
-            //Quaternion rotation = Quaternion.LookRotation(posDiff, Vector3.up);
-            //transform.rotation = rotation;
-        }
-        else
+        if (!(transform.position.z < m_tempTarget.z))
         {
             m_ArrowVelDir.y -= m_BaseBallGravity * Time.deltaTime; //dv = adt
-
-            //m_ArrowVelDir.y -= 0.1f;
-            //m_ArrowVelDir.y = 0.0f;
         }
     }
 

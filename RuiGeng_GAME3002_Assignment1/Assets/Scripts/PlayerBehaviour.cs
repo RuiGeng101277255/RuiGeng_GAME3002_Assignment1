@@ -7,7 +7,8 @@ public class PlayerBehaviour : MonoBehaviour
     public int ArrowNumber;
     private int m_BaseballLeft;
 
-    private Vector3 m_PlayerVComp = Vector3.zero;
+    private Vector3 m_PlayerVCompFront = Vector3.zero;
+    private Vector3 m_PlayerVCompRight = Vector3.zero;
     private Vector3 m_AimVComp = Vector3.zero;
     private Rigidbody m_PlayerRB = null;
     private GameObject m_AimObject = null;
@@ -30,6 +31,8 @@ public class PlayerBehaviour : MonoBehaviour
     //Rotation
     private float m_dx = 1.0f;
     private float m_dy = 1.0f;
+
+    public bool m_PlayerSteppedOnStrigger;
 
     public ShowMouse m_mouse;
 
@@ -101,46 +104,26 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
-            m_PlayerVComp += deltaSpeed1D * transform.forward;
+            m_PlayerVCompFront = deltaSpeed1D * transform.forward;
             m_moveForward = true;
-            //if (!m_moveForward)
-            //{
-            //    m_PlayerVComp += deltaSpeed1D * transform.forward;
-            //    m_moveForward = true;
-            //}
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            m_PlayerVComp += -deltaSpeed1D * transform.forward;
+            m_PlayerVCompFront = -deltaSpeed1D * transform.forward;
             m_moveForward = true;
-            //if (!m_moveForward)
-            //{
-            //    m_PlayerVComp += -deltaSpeed1D * transform.forward;
-            //    m_moveForward = true;
-            //}
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            m_PlayerVComp += -deltaSpeed1D * transform.right;
+            m_PlayerVCompRight = -deltaSpeed1D * transform.right;
             m_moveRight = true;
-            //if (!m_moveRight)
-            //{
-            //    m_PlayerVComp += -deltaSpeed1D * transform.right;
-            //    m_moveRight = true;
-            //}
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            m_PlayerVComp += deltaSpeed1D * transform.right;
+            m_PlayerVCompRight = deltaSpeed1D * transform.right;
             m_moveRight = true;
-            //if (!m_moveRight)
-            //{
-            //    m_PlayerVComp += deltaSpeed1D * transform.right;
-            //    m_moveRight = true;
-            //}
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -157,25 +140,11 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
-        //if (Input.GetKeyUp(KeyCode.Space))
-        //{
-        //    //Firing arrow if delta fire rate to frame is not 0, prevents from spamming
-        //    if (m_delFire <= 0)
-        //    {
-        //        if (m_BaseballLeft > 0)
-        //        {
-        //            launchArrow();
-        //            m_BaseballLeft -= 1;
-        //            m_delFire = ArrowFireRate * Time.deltaTime;
-        //        }
-        //    }
-        //}
-
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
             if (m_moveForward)
             {
-                m_PlayerVComp -= deltaSpeed1D * transform.forward;
+                m_PlayerVCompFront = Vector3.zero;
                 m_moveForward = false;
             }
         }
@@ -184,32 +153,34 @@ public class PlayerBehaviour : MonoBehaviour
         {
             if (m_moveRight)
             {
-                m_PlayerVComp -= deltaSpeed1D * transform.right;
+                m_PlayerVCompRight = Vector3.zero;
                 m_moveRight = false;
             }
         }
 
-        if (!m_moveForward && !m_moveRight)
-        {
-            m_PlayerVComp = Vector3.zero;
-        }
+        //if (!m_moveForward && !m_moveRight)
+        //{
+        //    m_PlayerVComp = Vector3.zero;
+        //}
 
-        transform.position += new Vector3 (m_PlayerVComp.x, 0.0f, m_PlayerVComp.z) * Time.deltaTime;
-        m_AimObject.transform.position += new Vector3(m_PlayerVComp.x, 0.0f, m_PlayerVComp.z) * Time.deltaTime;
+        Vector3 m_totalVComp = m_PlayerVCompFront + m_PlayerVCompRight;
+
+        transform.position += new Vector3(m_totalVComp.x, 0.0f, m_totalVComp.z);// * Time.deltaTime;
+        m_AimObject.transform.position += new Vector3(m_totalVComp.x, 0.0f, m_totalVComp.z);// * Time.deltaTime;
         //transform.LookAt(m_AimObject.transform.position - transform.position);
 
-        float xDir = Input.GetAxis("Mouse X") / (2.0f * Mathf.PI);
+        float xDir = Input.GetAxis("Mouse X") / (4.0f * Mathf.PI);
 
         if (Mathf.Abs(xDir) > 0.0f)
         {
             if ((transform.rotation.y >= 180.0f) || (transform.rotation.y <= -180.0f))
             {
-                transform.rotation = new Quaternion(transform.rotation.x, -(transform.rotation.y - transform.rotation.y / 180.0f), transform.rotation.z, transform.rotation.w);
+                transform.rotation = new Quaternion(transform.rotation.x, -(transform.rotation.y) + transform.rotation.y / 180.0f, transform.rotation.z, transform.rotation.w);
                 m_dx *= -1.0f;
             }
             else
             {
-                transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y + xDir * 1.0f, transform.rotation.z, transform.rotation.w);
+                transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y + xDir * m_dx, transform.rotation.z, transform.rotation.w);
             }
         }
 
@@ -218,13 +189,13 @@ public class PlayerBehaviour : MonoBehaviour
 
         //float xDir = Input.GetAxis("Mouse X") * Mathf.Cos(transform.rotation.y);
         //float zDir = Input.GetAxis("Mouse X") * Mathf.Sin(transform.rotation.y);
-        float yDir = Input.GetAxis("Mouse Y") / (2.0f * Mathf.PI);
+        float yDir = Input.GetAxis("Mouse Y") / (4.0f * Mathf.PI);
 
         if (Mathf.Abs(yDir) > 0.0f)
         {
             if ((transform.rotation.x >= 180.0f) || (transform.rotation.x <= -180.0f))
             {
-                transform.rotation = new Quaternion(-(transform.rotation.x - transform.rotation.x / 180.0f), transform.rotation.y, transform.rotation.z, transform.rotation.w);
+                transform.rotation = new Quaternion(-(transform.rotation.x) + transform.rotation.x / 180.0f, transform.rotation.y, transform.rotation.z, transform.rotation.w);
                 m_dy *= -1.0f;
             }
             else

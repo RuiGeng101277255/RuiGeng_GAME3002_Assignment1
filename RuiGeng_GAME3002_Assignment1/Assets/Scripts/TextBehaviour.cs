@@ -15,18 +15,6 @@ public class TextBehaviour : MonoBehaviour
     void Start()
     {
         m_Text = GetComponent<Text>();
-        //m_Player = GetComponent<PlayerBehaviour>();
-
-        //m_BoxList[0] = GetComponent<TargetBoxes>();
-
-        //if (m_BoxList[0] != null)
-        //{
-        //    for (int a = 1; m_BoxList[a - 1] != null; a++)
-        //    {
-        //        m_BoxList[a] = GetComponent<TargetBoxes>();
-        //        m_BoxNum = a - 1;
-        //    }
-        //}
 
         m_BoxNum = m_BoxList.Count;
 
