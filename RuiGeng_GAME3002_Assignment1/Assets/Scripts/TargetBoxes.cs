@@ -13,6 +13,7 @@ public class TargetBoxes : MonoBehaviour
 
     private ParticleSystem m_particles;
     private AudioSource m_explosionsfx;
+    private AudioSource m_triggersfx;
 
     public bool m_IsDetection; // To check for stepping platform
     public PlayerBehaviour m_Player;
@@ -24,6 +25,7 @@ public class TargetBoxes : MonoBehaviour
         m_BoxRenderer.material.color = Color.white;
         m_particles = GetComponent<ParticleSystem>();
         m_explosionsfx = GetComponent<AudioSource>();
+        m_triggersfx = GetComponent<AudioSource>();
         m_explosionsfx.Pause();
         m_particles.Pause();
     }
@@ -69,6 +71,7 @@ public class TargetBoxes : MonoBehaviour
             {
                 m_BoxRenderer.material.color = Color.cyan;
                 m_Player.m_PlayerSteppedOnStrigger = true;
+                m_triggersfx.Play();
             }
         }
     }

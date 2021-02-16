@@ -15,11 +15,7 @@ public class TextBehaviour : MonoBehaviour
     void Start()
     {
         m_Text = GetComponent<Text>();
-
         m_BoxNum = m_BoxList.Count;
-
-        Debug.Log(m_BoxNum);
-        Debug.Log(m_BoxList.Count);
     }
 
     // Update is called once per frame

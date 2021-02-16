@@ -18,7 +18,7 @@ public class PlayerBehaviour : MonoBehaviour
     public int ArrowFireRate;
     private float m_delFire;
 
-    private float deltaSpeed1D = 0.05f;
+    private float deltaSpeed1D = 0.025f;
     public bool m_LevelCompleted = false;
 
     public SceneChanger m_sceneChanger;

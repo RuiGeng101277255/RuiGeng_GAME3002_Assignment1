@@ -316,8 +316,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -50}
-  m_SizeDelta: {x: 500, y: 400}
+  m_AnchoredPosition: {x: 0, y: -70}
+  m_SizeDelta: {x: 750, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &824264430
 MonoBehaviour:
@@ -352,30 +352,30 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'How To Play:
+  m_Text: 'W, A, S, D - Player Movement
+
+    Left Mouse click - Shoot Baseball
+
+    Right
+    Mouse click - Reset Target Position
+
+    P - Pause Menu
 
 
-    W, A, S, D - Player Movement
+    You are in an amusement
+    park, in front of you is a stand that you can throw baseball at.
 
-    Left Mouse click
-    - Shoot Baseball
-
-    Right Mouse click - Reset Target Position
-
-    P - Pause
-    Menu
+    The baseball
+    will initially move to the aim target (red dot) without gravity''s presence,
+    then after passing such point, the baseball would be in projectile motion.
 
 
-    You are in an amusement park, in front of you is a stand that you
-    can throw baseball at.
-
-    The baseball will initially move to the aim target
-    (red dot) without gravity''s presence, then after passing such point, the baseball
-    would be in projectile motion.
+    Trigger
+    the boxes by pressing standing on the platform in front.
 
 
-    When boxes are hit, they turn green and
-    dissapear after 2 seconds.'
+    When boxes are
+    hit, they turn green and dissapear after 2 seconds.'
 --- !u!222 &824264431
 CanvasRenderer:
   m_ObjectHideFlags: 0
