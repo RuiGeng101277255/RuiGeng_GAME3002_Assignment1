@@ -69,9 +69,12 @@ public class TargetBoxes : MonoBehaviour
         {
             if (m_IsDetection)
             {
-                m_BoxRenderer.material.color = Color.cyan;
-                m_Player.m_PlayerSteppedOnStrigger = true;
-                m_triggersfx.Play();
+                if (!m_Player.m_PlayerSteppedOnStrigger)
+                {
+                    m_BoxRenderer.material.color = Color.cyan;
+                    m_Player.m_PlayerSteppedOnStrigger = true;
+                    m_triggersfx.Play();
+                }
             }
         }
     }

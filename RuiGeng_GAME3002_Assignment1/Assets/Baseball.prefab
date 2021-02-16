@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_player: {fileID: 0}
-  m_ArrowSpeed: 15
+  m_BaseballSpeed: 20
   m_BaseBallGravity: 9.8
   m_MaxRange: 30
   m_bounds:

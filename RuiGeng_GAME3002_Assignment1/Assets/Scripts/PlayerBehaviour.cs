@@ -4,21 +4,20 @@ using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
 {
-    public int ArrowNumber;
+    public int BaseballNum;
     private int m_BaseballLeft;
 
     private Vector3 m_PlayerVCompFront = Vector3.zero;
     private Vector3 m_PlayerVCompRight = Vector3.zero;
-    private Vector3 m_AimVComp = Vector3.zero;
     private GameObject m_AimObject = null;
     private Camera m_PlayerCam = null;
 
-    private Queue<GameObject> m_ArrowPool;
-    public GameObject m_Arrow;
-    public int ArrowFireRate;
+    private Queue<GameObject> m_BaseballPool;
+    public GameObject m_Baseball;
+    public int BaseballFireRate;
     private float m_delFire;
 
-    private float deltaSpeed1D = 0.025f;
+    private float deltaSpeed1D = 0.03f;
     public bool m_LevelCompleted = false;
 
     public SceneChanger m_sceneChanger;
@@ -38,12 +37,11 @@ public class PlayerBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //ArrowFireRate = GetComponent<int>(); //For now
-        m_BaseballLeft = ArrowNumber;
+        m_BaseballLeft = BaseballNum;
         m_PlayerCam = GetComponentInChildren<Camera>();
         m_delFire = 0.0f;
         createAimObject();
-        buildArrowPool();
+        buildBallPool();
     }
 
     // Update is called once per frame
@@ -92,7 +90,6 @@ public class PlayerBehaviour : MonoBehaviour
         m_AimObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Vector3 tempPos = new Vector3(0.0f, transform.position.y, transform.position.z + 2.0f);
         m_AimObject.transform.position = tempPos;
-        //m_AimObject.transform.position = Vector3.zero;
         m_AimObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         m_AimObject.GetComponent<Renderer>().material.color = Color.red;
         m_AimObject.GetComponent<Collider>().enabled = false;
@@ -126,14 +123,14 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            //Firing arrow if delta fire rate to frame is not 0, prevents from spamming
+            //Firing baseballball if delta fire rate to frame is not 0, prevents from spamming
             if (m_delFire <= 0)
             {
                 if (m_BaseballLeft > 0)
                 {
-                    launchArrow();
+                    launchBaseball();
                     m_BaseballLeft -= 1;
-                    m_delFire = ArrowFireRate * Time.deltaTime;
+                    m_delFire = BaseballFireRate * Time.deltaTime;
                 }
             }
         }
@@ -156,16 +153,11 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
-        //if (!m_moveForward && !m_moveRight)
-        //{
-        //    m_PlayerVComp = Vector3.zero;
-        //}
-
         Vector3 m_totalVComp = m_PlayerVCompFront + m_PlayerVCompRight;
 
-        transform.position += new Vector3(m_totalVComp.x, 0.0f, m_totalVComp.z);// * Time.deltaTime;
-        m_AimObject.transform.position += new Vector3(m_totalVComp.x, 0.0f, m_totalVComp.z);// * Time.deltaTime;
-        //transform.LookAt(m_AimObject.transform.position - transform.position);
+        transform.position += new Vector3(m_totalVComp.x, 0.0f, m_totalVComp.z);
+        m_AimObject.transform.position += new Vector3(m_totalVComp.x, 0.0f, m_totalVComp.z);
+
 
         float xDir = Input.GetAxis("Mouse X") / (4.0f * Mathf.PI);
 
@@ -182,11 +174,6 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
-        Debug.Log(xDir);
-
-
-        //float xDir = Input.GetAxis("Mouse X") * Mathf.Cos(transform.rotation.y);
-        //float zDir = Input.GetAxis("Mouse X") * Mathf.Sin(transform.rotation.y);
         float yDir = Input.GetAxis("Mouse Y") / (4.0f * Mathf.PI);
 
         if (Mathf.Abs(yDir) > 0.0f)
@@ -206,46 +193,11 @@ public class PlayerBehaviour : MonoBehaviour
 
         m_AimObject.transform.position += m_tempdxdydz;
 
-        //m_AimVComp = new Vector3(xDir, yDir, zDir) * 2.0f * deltaSpeed1D;
-        //m_AimVComp = new Vector3(0.0f, yDir, 0.0f) * 2.0f * deltaSpeed1D;
-
-        //m_AimObject.transform.position += m_AimVComp;
-
         transform.LookAt(m_AimObject.transform.position);
     }
 
     private void updateAimObject()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            m_AimVComp.y = deltaSpeed1D;
-        }
-
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            m_AimVComp.y = -deltaSpeed1D;
-        }
-
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            m_AimVComp.x = -deltaSpeed1D;
-        }
-
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            m_AimVComp.x = deltaSpeed1D;
-        }
-
-        if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow))
-        {
-            m_AimVComp.y = 0.0f;
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            m_AimVComp.x = 0.0f;
-        }
-
         if(Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Input.mousePosition;
@@ -253,64 +205,58 @@ public class PlayerBehaviour : MonoBehaviour
             mousePos.y -= Screen.height / 2.0f;
             m_mouse.lockMouse = true;
             Vector3 ScreenPos = m_PlayerCam.ScreenToWorldPoint(mousePos);
-            //Vector3 ScreenPos = m_PlayerCam.ScreenToViewportPoint(mousePos);
 
             ScreenPos.z = transform.position.z + 2.0f;
 
             m_AimObject.transform.position = ScreenPos;
-
-            Debug.Log("MousePos" + mousePos);
-            Debug.Log("ScreenPos" + ScreenPos);
         }
     }
 
-    private void launchArrow()
+    private void launchBaseball()
     {
-        //Find unused arrow
+        //Find unused baseball
 
-        GameObject temp_UnUsed = getunUsedArrow();
+        GameObject temp_UnUsed = getunUsedBaseball();
 
         if (temp_UnUsed != null)
         {
-            if (Time.frameCount % ArrowFireRate == 0)
+            if (Time.frameCount % BaseballFireRate == 0)
             {
-                var tempBullet = getunUsedArrow();
+                var tempBullet = getunUsedBaseball();
                 //tempBullet.transform.SetParent(transform);
             }
         }
     }
 
-    private void buildArrowPool()
+    private void buildBallPool()
     {
-        m_ArrowPool = new Queue<GameObject>();
+        m_BaseballPool = new Queue<GameObject>();
 
-        for (int i = 0; i < ArrowNumber; i++)
+        for (int i = 0; i < BaseballNum; i++)
         {
-            var tempArrow = Instantiate(m_Arrow);
-            //tempArrow.transform.SetParent(transform);
-            tempArrow.SetActive(false);
-            m_ArrowPool.Enqueue(tempArrow);
+            var tempBall = Instantiate(m_Baseball);
+            tempBall.SetActive(false);
+            m_BaseballPool.Enqueue(tempBall);
         }
     }
 
-    private GameObject getunUsedArrow()
+    private GameObject getunUsedBaseball()
     {
-        GameObject newArrow = null;
-        newArrow = m_ArrowPool.Dequeue();
-        newArrow.SetActive(true);
-        newArrow.transform.position = transform.position;// + new Vector3(0.0f, 0.0f, 1.0f);
-        newArrow.GetComponent<BaseballBehaviour>().setTarget(m_AimObject.transform.position);
+        GameObject newBall = null;
+        newBall = m_BaseballPool.Dequeue();
+        newBall.SetActive(true);
+        newBall.transform.position = transform.position;// + new Vector3(0.0f, 0.0f, 1.0f);
+        newBall.GetComponent<BaseballBehaviour>().setTarget(m_AimObject.transform.position);
 
-        return newArrow;
+        return newBall;
     }
 
-    public void returnedArrow(GameObject returnedArrow)
+    public void returnedBaseball(GameObject launchBaseball)
     {
-        returnedArrow.SetActive(false);
-        m_ArrowPool.Enqueue(returnedArrow);
-
-        if  (m_BaseballLeft < ArrowNumber)
+        if  (m_BaseballLeft < BaseballNum)
         {
+            launchBaseball.SetActive(false);
+            m_BaseballPool.Enqueue(launchBaseball);
             m_BaseballLeft += 1;
         }
     }
