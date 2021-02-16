@@ -24,6 +24,15 @@ public class PlayerBehaviour : MonoBehaviour
     public SceneChanger m_sceneChanger;
     public bool m_scenePaused = false;
 
+    private bool m_moveForward = false;
+    private bool m_moveRight = false;
+
+    //Rotation
+    private float m_dx = 1.0f;
+    private float m_dy = 1.0f;
+
+    public ShowMouse m_mouse;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -83,7 +92,7 @@ public class PlayerBehaviour : MonoBehaviour
         Vector3 tempPos = new Vector3(0.0f, transform.position.y, transform.position.z + 2.0f);
         m_AimObject.transform.position = tempPos;
         //m_AimObject.transform.position = Vector3.zero;
-        m_AimObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.01f);
+        m_AimObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         m_AimObject.GetComponent<Renderer>().material.color = Color.red;
         m_AimObject.GetComponent<Collider>().enabled = false;
     }
@@ -92,22 +101,46 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
-            m_PlayerVComp.z = deltaSpeed1D;
+            m_PlayerVComp += deltaSpeed1D * transform.forward;
+            m_moveForward = true;
+            //if (!m_moveForward)
+            //{
+            //    m_PlayerVComp += deltaSpeed1D * transform.forward;
+            //    m_moveForward = true;
+            //}
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            m_PlayerVComp.z = -deltaSpeed1D;
+            m_PlayerVComp += -deltaSpeed1D * transform.forward;
+            m_moveForward = true;
+            //if (!m_moveForward)
+            //{
+            //    m_PlayerVComp += -deltaSpeed1D * transform.forward;
+            //    m_moveForward = true;
+            //}
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            m_PlayerVComp.x = -deltaSpeed1D;
+            m_PlayerVComp += -deltaSpeed1D * transform.right;
+            m_moveRight = true;
+            //if (!m_moveRight)
+            //{
+            //    m_PlayerVComp += -deltaSpeed1D * transform.right;
+            //    m_moveRight = true;
+            //}
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            m_PlayerVComp.x = deltaSpeed1D;
+            m_PlayerVComp += deltaSpeed1D * transform.right;
+            m_moveRight = true;
+            //if (!m_moveRight)
+            //{
+            //    m_PlayerVComp += deltaSpeed1D * transform.right;
+            //    m_moveRight = true;
+            //}
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -140,16 +173,76 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
-            m_PlayerVComp.z = 0.0f;
+            if (m_moveForward)
+            {
+                m_PlayerVComp -= deltaSpeed1D * transform.forward;
+                m_moveForward = false;
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
         {
-            m_PlayerVComp.x = 0.0f;
+            if (m_moveRight)
+            {
+                m_PlayerVComp -= deltaSpeed1D * transform.right;
+                m_moveRight = false;
+            }
         }
 
-        transform.position += m_PlayerVComp * 0.4f;
-        m_AimObject.transform.position += m_PlayerVComp * 0.4f;
+        if (!m_moveForward && !m_moveRight)
+        {
+            m_PlayerVComp = Vector3.zero;
+        }
+
+        transform.position += new Vector3 (m_PlayerVComp.x, 0.0f, m_PlayerVComp.z) * Time.deltaTime;
+        m_AimObject.transform.position += new Vector3(m_PlayerVComp.x, 0.0f, m_PlayerVComp.z) * Time.deltaTime;
+        //transform.LookAt(m_AimObject.transform.position - transform.position);
+
+        float xDir = Input.GetAxis("Mouse X") / (2.0f * Mathf.PI);
+
+        if (Mathf.Abs(xDir) > 0.0f)
+        {
+            if ((transform.rotation.y >= 180.0f) || (transform.rotation.y <= -180.0f))
+            {
+                transform.rotation = new Quaternion(transform.rotation.x, -(transform.rotation.y - transform.rotation.y / 180.0f), transform.rotation.z, transform.rotation.w);
+                m_dx *= -1.0f;
+            }
+            else
+            {
+                transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y + xDir * 1.0f, transform.rotation.z, transform.rotation.w);
+            }
+        }
+
+        Debug.Log(xDir);
+
+
+        //float xDir = Input.GetAxis("Mouse X") * Mathf.Cos(transform.rotation.y);
+        //float zDir = Input.GetAxis("Mouse X") * Mathf.Sin(transform.rotation.y);
+        float yDir = Input.GetAxis("Mouse Y") / (2.0f * Mathf.PI);
+
+        if (Mathf.Abs(yDir) > 0.0f)
+        {
+            if ((transform.rotation.x >= 180.0f) || (transform.rotation.x <= -180.0f))
+            {
+                transform.rotation = new Quaternion(-(transform.rotation.x - transform.rotation.x / 180.0f), transform.rotation.y, transform.rotation.z, transform.rotation.w);
+                m_dy *= -1.0f;
+            }
+            else
+            {
+                transform.rotation = new Quaternion(transform.rotation.x - yDir * m_dy, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+            }
+        }
+
+        Vector3 m_tempdxdydz = (transform.forward - (m_AimObject.transform.position - transform.position).normalized) * 2.0f;
+
+        m_AimObject.transform.position += m_tempdxdydz;
+
+        //m_AimVComp = new Vector3(xDir, yDir, zDir) * 2.0f * deltaSpeed1D;
+        //m_AimVComp = new Vector3(0.0f, yDir, 0.0f) * 2.0f * deltaSpeed1D;
+
+        //m_AimObject.transform.position += m_AimVComp;
+
+        transform.LookAt(m_AimObject.transform.position);
     }
 
     private void updateAimObject()
@@ -187,6 +280,9 @@ public class PlayerBehaviour : MonoBehaviour
         if(Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Input.mousePosition;
+            mousePos.x -= Screen.width / 2.0f;
+            mousePos.y -= Screen.height / 2.0f;
+            m_mouse.lockMouse = true;
             Vector3 ScreenPos = m_PlayerCam.ScreenToWorldPoint(mousePos);
             //Vector3 ScreenPos = m_PlayerCam.ScreenToViewportPoint(mousePos);
 
@@ -197,13 +293,6 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("MousePos" + mousePos);
             Debug.Log("ScreenPos" + ScreenPos);
         }
-
-        float xDir = Input.GetAxis("Mouse X");
-        float yDir = Input.GetAxis("Mouse Y");
-
-        m_AimVComp = new Vector3(xDir, yDir, 0.0f) * 2.0f * deltaSpeed1D;
-
-        m_AimObject.transform.position += m_AimVComp;
     }
 
     private void launchArrow()

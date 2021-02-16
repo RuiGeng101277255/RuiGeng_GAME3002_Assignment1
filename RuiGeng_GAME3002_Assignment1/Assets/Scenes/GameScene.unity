@@ -36867,6 +36867,7 @@ MonoBehaviour:
   m_LevelCompleted: 0
   m_sceneChanger: {fileID: 86424051}
   m_scenePaused: 0
+  m_mouse: {fileID: 282896673}
 --- !u!136 &1689875287
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -36959,7 +36960,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 78
   m_CollisionDetection: 0
 --- !u!1 &1920438906
 GameObject:
