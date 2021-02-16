@@ -10,7 +10,6 @@ public class PlayerBehaviour : MonoBehaviour
     private Vector3 m_PlayerVCompFront = Vector3.zero;
     private Vector3 m_PlayerVCompRight = Vector3.zero;
     private Vector3 m_AimVComp = Vector3.zero;
-    private Rigidbody m_PlayerRB = null;
     private GameObject m_AimObject = null;
     private Camera m_PlayerCam = null;
 
@@ -41,7 +40,6 @@ public class PlayerBehaviour : MonoBehaviour
     {
         //ArrowFireRate = GetComponent<int>(); //For now
         m_BaseballLeft = ArrowNumber;
-        m_PlayerRB = GetComponent<Rigidbody>();
         m_PlayerCam = GetComponentInChildren<Camera>();
         m_delFire = 0.0f;
         createAimObject();
