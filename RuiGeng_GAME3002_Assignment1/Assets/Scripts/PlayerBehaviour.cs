@@ -128,8 +128,7 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 if (m_BaseballLeft > 0)
                 {
-                    launchBaseball();
-                    m_BaseballLeft -= 1;
+                    getunUsedBaseball();
                     m_delFire = BaseballFireRate * Time.deltaTime;
                 }
             }
@@ -211,23 +210,6 @@ public class PlayerBehaviour : MonoBehaviour
             m_AimObject.transform.position = ScreenPos;
         }
     }
-
-    private void launchBaseball()
-    {
-        //Find unused baseball
-
-        GameObject temp_UnUsed = getunUsedBaseball();
-
-        if (temp_UnUsed != null)
-        {
-            if (Time.frameCount % BaseballFireRate == 0)
-            {
-                var tempBullet = getunUsedBaseball();
-                //tempBullet.transform.SetParent(transform);
-            }
-        }
-    }
-
     private void buildBallPool()
     {
         m_BaseballPool = new Queue<GameObject>();
@@ -247,6 +229,7 @@ public class PlayerBehaviour : MonoBehaviour
         newBall.SetActive(true);
         newBall.transform.position = transform.position;// + new Vector3(0.0f, 0.0f, 1.0f);
         newBall.GetComponent<BaseballBehaviour>().setTarget(m_AimObject.transform.position);
+        m_BaseballLeft -= 1;
 
         return newBall;
     }
